@@ -22,7 +22,7 @@ class App extends Component {
   }
 
   async loadData() {
-    const response = await fetch("/resumo_medicamentos.csv");
+    const response = await fetch("/drugs.csv");
     let temp = await response.text();
     temp = Papa.parse(temp, { header: true });
     temp = temp.data.map((row) => {
