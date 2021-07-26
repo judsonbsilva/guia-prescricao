@@ -1,80 +1,80 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 import MaterialTable from "material-table";
 
-class App extends Component {
+const useFetch = (url) => {
+  const [data, setData] = useState(null);
 
-  constructor(props){
-    super(props);
-    this.state = {
-      data: [],
-      columns: [
-        //{ title:'ID', field: 'id' },
-        { title:'Princípio Ativo', field: 'substancia' },
-        { title:'Concentração', field: 'concentracao' },
-        { title:'Marcas', field: 'marcas' },
-        { title:'Apresentação', field: 'apresentacao' },
-        { title:'Mínimo (R$)', field: 'minino' },
-        { title:'Máximo (R$)', field: 'maximo' },
-        { title:'Médio (R$)', field: 'mediano' }
-      ]
-    };
-  }
+  useEffect(() => {
+    async function fetchData() {
+      const response = await fetch(url);
+      const text = await response.text();
+      setData(text);
+    }
+    fetchData();
+  }, [url]);
 
-  async loadData() {
-    const response = await fetch("/drugs.csv");
-    let temp = await response.text();
-    temp = Papa.parse(temp, { header: true });
-    temp = temp.data.map((row) => {
-      let newRow = {};
+  return data;
+};
+
+const parseCSV = (data) => {
+  return !data ? [] : Papa.parse(data, { header: true }).data.map((row) => {
+    let args = {};
+    
+    const brands = row.marcas.split(/\|/g).map((x) => ({ nome: x }));
+    const pricesMin = row.valoresMin.split(/\|/g).map((x) => Number(x));
+    const pricesMax = row.valoresMax.split(/\|/g).map((x) => Number(x));
+    const pricesMed = row.valoresMed.split(/\|/g).map((x) => Number(x));
       
-      const brands = row.marcas.split(/\|/g).map((x) => ({ nome: x }));
-      const pricesMin = row.valoresMin.split(/\|/g).map((x) => Number(x));
-      const pricesMax = row.valoresMax.split(/\|/g).map((x) => Number(x));
-      const pricesMed = row.valoresMed.split(/\|/g).map((x) => Number(x));
-        
-      newRow.options = brands.map((brand, i) => {
-        return {
-          ...brand,
-          min: pricesMin[i],
-          max: pricesMax[i],
-          med: pricesMed[i]
-        }
-      });
-
-      newRow.marcas = row.marcas.replace(/\|/g, ', ');
-      newRow.substancia = row.substancia.replace(/;/g, ', ');
-      let apres = row.resumoApresentacao.split(/\|/g);
-      newRow.concentracao = apres.slice(0, apres.length -2).join(' + ');
-      newRow.apresentacao = apres.slice(apres.length -2, apres.length).join(', ');
-
-      return { ...row, ...newRow };
+    args.options = brands.map((brand, i) => {
+      return {
+        ...brand,
+        min: pricesMin[i],
+        max: pricesMax[i],
+        med: pricesMed[i]
+      }
     });
 
-    this.setState({ data: temp });
-  }
+    args.marcas = row.marcas.replace(/\|/g, ', ');
+    args.substancia = row.substancia.replace(/;/g, ', ');
+    let apres = row.resumoApresentacao.split(/\|/g);
+    args.concentracao = apres.slice(0, apres.length -2).join(' + ');
+    args.apresentacao = apres.slice(apres.length -2, apres.length).join(', ');
 
-  componentDidMount() {
-    this.loadData();
-  }
+    return { ...row, ...args };
+  })
+}
 
-  render() {
-    return (
-      <div className="w-screen h-screen">
-        <MaterialTable
-          columns={this.state.columns}
-          data={this.state.data}
-          title="Medicações e Preços"
-          options={{
-            paging: true
-          }}
-          onPageChange={()=>{
-            console.log(arguments);
-          }}
-        />       
-      </div>
-    );
-  }
+const columns = [
+  //{ title:'ID', field: 'id' },
+  { title:'Princípio Ativo', field: 'substancia' },
+  { title:'Concentração', field: 'concentracao' },
+  { title:'Marcas', field: 'marcas' },
+  { title:'Apresentação', field: 'apresentacao' },
+  { title:'Mínimo (R$)', field: 'minino' },
+  { title:'Máximo (R$)', field: 'maximo' },
+  { title:'Médio (R$)', field: 'mediano' }
+];
+
+function App (){
+  const text = useFetch('/drugs.csv');
+  const data = parseCSV(text);
+
+  return (
+    <div className="w-screen h-screen">
+      <MaterialTable
+        columns={columns}
+        data={data}
+        title="Medicações e Preços"
+        options={{
+          paging: true
+        }}
+        onPageChange={()=>{
+          console.log(arguments);
+        }}
+      />       
+    </div>
+  );
 }
 
 export default App;
