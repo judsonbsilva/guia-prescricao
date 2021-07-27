@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Handlebars from 'handlebars';
-import InputData from './components/InputData';
-import { generateVars } from './helpers';
+import InputData from './InputData';
+import { generateVars } from '../helpers';
 
 function Text() {
   const [state, setState] = useState({

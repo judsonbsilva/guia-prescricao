@@ -95,7 +95,7 @@ function App (){
     columns,
     data,
     initialState: {
-      pageSize: 5
+      pageSize: 10
     }
   }, useFilters, usePagination);
 
@@ -108,11 +108,14 @@ function App (){
   };
 
   return (
-    <div className='w-full h-full px-4'>
-     <header className="flex flex-wrap">
-      <h1 className="flex-auto text-xl font-semibold mt-2">Guia de Prescrição</h1>
-      <div className="w-full flex-none text-sm font-medium text-gray-500">Por Judson Barroso</div>
-      <form className="relative w-1/2">
+    <div className='w-full h-screen px-4 bg-gray-50'>
+     <header className="flex flex-wrap md:h-1/6 sm:h-14">
+       <div className="flex-auto md:w-full sm:w-1/2">
+        <h1 className="w-full md:text-xl font-semibold mt-2 sm:text-base">Guia de Prescrição</h1>
+        <div className="w-full flex-none md:text-sm font-medium text-gray-500 sm:text-xs">Por Judson Barroso</div>
+      </div>
+      <div className="flex-auto md:w-full sm:w-1/2">
+      <form className="relative">
         <svg width="20" height="20" fill="currentColor" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
         </svg>
@@ -123,14 +126,15 @@ function App (){
           className='focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-10 bg-gray-100 my-2'
         />  
       </form>
+      </div>
     </header>
-    
+    <div className="flex h-4/6 overflow-y-auto">
     <table {...getTableProps()} className='table-auto w-full'>
       <thead>
         {headerGroups.map(headerGroup => (
           <tr {...headerGroup.getHeaderGroupProps()} className='bg-gray-800 mar'>
             {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()} className='px-2 py-2 text-white h-100'>
+              <th {...column.getHeaderProps()} className='px-2 py-2 text-white h-10'>
                 {column.render('Header')}
               </th>
             ))}
@@ -146,7 +150,7 @@ function App (){
                     return (
                       <td
                         {...cell.getCellProps()}
-                        className='border px-4 py-4 h-1/5'
+                        className='border px-4 py-4'
                       >
                         {cell.render('Cell')}
                       </td>
@@ -156,19 +160,29 @@ function App (){
             )
           })}
       </tbody>
-      <tfoot>
-      <div className="inline-flex py-2">
+    </table>
+    </div>
+    <footer className="flex h-1/6">
+    <div className="inline-flex h-14 py-2">
         <button
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
+          //className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
           onClick={() => previousPage()} disabled={!canPreviousPage}
+          className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
         >
-          {'<'}
+          <span class="sr-only">Anterior</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          </svg>
         </button>
         <button
-          className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
+          //className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
+          className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           onClick={() => nextPage()} disabled={!canNextPage}
         >
-          {'>'}
+          <span class="sr-only">Posterior</span>
+          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          </svg>
         </button>
         <div className="relative font-medium">
           <p className='inline-block text-gray-800 text-center align-middle py-2 px-4'>
@@ -176,8 +190,7 @@ function App (){
           </p>
         </div>
       </div>
-      </tfoot>
-    </table>
+    </footer>
     </div>
   );
 /*  
