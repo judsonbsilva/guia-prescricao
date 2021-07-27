@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
 //import MaterialTable from "material-table";
 import { useTable, usePagination, useFilters } from 'react-table';
+import DrugsTable from './components/DrugsTable';
 
 const parseCSV = (data) => {
   return !data ? [] : Papa.parse(data, { header: true }).data.map((row) => {
@@ -40,7 +41,6 @@ const columns = [
   { Header:'Médio (R$)', accessor: 'mediano' }
 ];
 
-const pageSizeOptions = [10, 50]
 
 function App (){
   const [data, setData] = useState([]);
@@ -56,55 +56,33 @@ function App (){
       })();
     }
   });
-  
-  // Input element
-  /*= React.useCallback(() => {
-    const text = useFetch('/drugs.csv');
-    return parseCSV(text)
-  });*/
 
-  //const text = useFetch('/drugs.csv');
-  //const data = parseCSV(text);
-  /*const columns = React.useMemo(() => [
-    { Header:'Princípio Ativo', accessor: 'substancia' },
-    { Header:'Concentração', accessor: 'concentracao' },
-    { Header:'Marcas', accessor: 'marcas' },
-    { Header:'Apresentação', accessor: 'apresentacao' },
-    { Header:'Mínimo (R$)', accessor: 'minino' },
-    { Header:'Máximo (R$)', accessor: 'maximo' },
-    { Header:'Médio (R$)', accessor: 'mediano' }
-  ],[]);*/
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    //rows,
-    prepareRow,
+  /*const {
     pageOptions,
     page,
     state: { pageIndex, pageSize },
     gotoPage,
     previousPage,
- nextPage,
-  setPageSize,
-     canPreviousPage,
-     canNextPage,
-     setFilter,
-  } = useTable({
-    columns,
-    data,
-    initialState: {
-      pageSize: 10
-    }
-  }, useFilters, usePagination);
-
-  console.log(data);
+    nextPage,
+    setPageSize,
+    canPreviousPage,
+    canNextPage,
+    setFilter,
+  }*/
+  
+  const tableInstance = useTable({
+      columns,
+      data,
+      initialState: { pageSize: 10 }
+    },
+    useFilters,
+    usePagination
+  );
 
   const handleFilterChange = e => {
     const value = e.target.value || undefined;
     setFilterInput(value);
-    setFilter('substancia', value)
+    tableInstance.setFilter('substancia', value)
   };
 
   return (
@@ -129,44 +107,17 @@ function App (){
       </div>
     </header>
     <div className="flex h-4/6 overflow-y-auto">
-    <table {...getTableProps()} className='table-auto w-full'>
-      <thead>
-        {headerGroups.map(headerGroup => (
-          <tr {...headerGroup.getHeaderGroupProps()} className='bg-gray-800 mar'>
-            {headerGroup.headers.map(column => (
-              <th {...column.getHeaderProps()} className='px-2 py-2 text-white h-10'>
-                {column.render('Header')}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody {...getTableBodyProps()}>
-        {page.map((row, i) => {
-            prepareRow(row)
-            return (
-              <tr {...row.getRowProps()}>
-                {row.cells.map(cell => {
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        className='border px-4 py-4'
-                      >
-                        {cell.render('Cell')}
-                      </td>
-                    )
-                })}
-              </tr>
-            )
-          })}
-      </tbody>
-    </table>
+      {data.length == 0 ? 
+        <img src={'https://loading.io/asset/500235'}/>
+        :
+        <DrugsTable tableInstance={tableInstance}/>
+      }
     </div>
     <footer className="flex h-1/6">
     <div className="inline-flex h-14 py-2">
         <button
           //className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-l"
-          onClick={() => previousPage()} disabled={!canPreviousPage}
+          onClick={() => tableInstance.previousPage()} disabled={!tableInstance.canPreviousPage}
           className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
         >
           <span class="sr-only">Anterior</span>
@@ -177,7 +128,7 @@ function App (){
         <button
           //className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-r"
           className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-          onClick={() => nextPage()} disabled={!canNextPage}
+          onClick={() => tableInstance.nextPage()} disabled={!tableInstance.canNextPage}
         >
           <span class="sr-only">Posterior</span>
           <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -186,7 +137,7 @@ function App (){
         </button>
         <div className="relative font-medium">
           <p className='inline-block text-gray-800 text-center align-middle py-2 px-4'>
-          {pageIndex + 1} de {pageOptions.length}
+          {tableInstance.state.pageIndex + 1} de {tableInstance.pageOptions.length}
           </p>
         </div>
       </div>
