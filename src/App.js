@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Papa from 'papaparse';
-//import MaterialTable from "material-table";
-import { useTable, usePagination, useFilters } from 'react-table';
+import {
+  useTable,
+  usePagination,
+  useFilters,
+  useGlobalFilter,
+  useSortBy
+} from 'react-table';
+
 import DrugsTable from './components/DrugsTable';
+import FilterInput from './components/FilterInput';
 
 const parseCSV = (data) => {
   return !data ? [] : Papa.parse(data, { header: true }).data.map((row) => {
@@ -44,11 +51,10 @@ const columns = [
 
 function App (){
   const [data, setData] = useState([]);
-  const [filterInput, setFilterInput] = useState('');
   
   useEffect(() => {
-    if(data.length == 0){
-      (async ()=> {
+    if(data.length === 0){
+      (async () => {
         const response = await fetch('/drugs.csv');
         const text = await response.text();
         const data = parseCSV(text);
@@ -73,17 +79,19 @@ function App (){
   const tableInstance = useTable({
       columns,
       data,
-      initialState: { pageSize: 10 }
+      initialState: {
+        pageSize: 10,
+        sortBy: [
+          { id: 'substancia', desc: true },
+          { id: 'marcas', desc: false }
+        ]
+      }
     },
     useFilters,
+    useGlobalFilter,
+    useSortBy,
     usePagination
   );
-
-  const handleFilterChange = e => {
-    const value = e.target.value || undefined;
-    setFilterInput(value);
-    tableInstance.setFilter('substancia', value)
-  };
 
   return (
     <div className='w-full h-screen px-4 bg-gray-50'>
@@ -93,24 +101,14 @@ function App (){
         <div className="w-full flex-none md:text-sm font-medium text-gray-500 sm:text-xs">Por Judson Barroso</div>
       </div>
       <div className="flex-auto md:w-full sm:w-1/2">
-      <form className="relative">
-        <svg width="20" height="20" fill="currentColor" className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-          <path fill-rule="evenodd" clip-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" />
-        </svg>
-        <input
-          value={filterInput}
-          onChange={handleFilterChange}
-          placeholder={'Buscar medicamento'}
-          className='focus:border-light-blue-500 focus:ring-1 focus:ring-light-blue-500 focus:outline-none w-full text-sm text-black placeholder-gray-500 border border-gray-200 rounded-md py-2 pl-10 bg-gray-100 my-2'
-        />  
-      </form>
+        <FilterInput {...tableInstance}/>
       </div>
     </header>
     <div className="flex h-4/6 overflow-y-auto">
-      {data.length == 0 ? 
-        <img src={'https://loading.io/asset/500235'}/>
+      {data.length === 0 ? 
+        'Carregando...'
         :
-        <DrugsTable tableInstance={tableInstance}/>
+        <DrugsTable {...tableInstance}/>
       }
     </div>
     <footer className="flex h-1/6">
@@ -166,9 +164,6 @@ function App (){
            </option>
          ))}
        </select>
-        
-
-
 */
 
 }

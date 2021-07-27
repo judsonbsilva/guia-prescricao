@@ -1,15 +1,12 @@
 import React from 'react';
 
-const DrugsTable = ({tableInstance}) => {
-
-    const {
-        getTableProps,
-        getTableBodyProps,
-        headerGroups,
-        prepareRow,
-        page
-    } = tableInstance;
-
+const DrugsTable = ({
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    prepareRow,
+    page
+}) => {
     return (
         <table {...getTableProps()} className='table-auto w-full'>
             <thead>
