@@ -7,6 +7,11 @@ const DrugsTable = ({
     prepareRow,
     page
 }) => {
+
+    const xablau = (e) => {
+        console.log(e);
+    }
+
     return (
         <table {...getTableProps()} className='table-auto w-full'>
             <thead>
@@ -24,7 +29,7 @@ const DrugsTable = ({
                 {page.map((row, i) => {
                     prepareRow(row)
                     return (
-                    <tr {...row.getRowProps()}>
+                    <tr {...row.getRowProps()} onFocus={xablau}>
                         {row.cells.map(cell => {
                             return (
                             <td

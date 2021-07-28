@@ -28,8 +28,9 @@ const parseCSV = (data) => {
         med: pricesMed[i]
       }
     });
-
-    args.marcas = row.marcas.replace(/\|/g, ', ');
+    args.tam = row.substancia.length;
+    args.marcas = ([...new Set(row.marcas.split((/\|/g)))]).join(', ');
+//    .replace(/\|/g, ', ');
     args.substancia = row.substancia.replace(/;/g, ', ');
     let apres = row.resumoApresentacao.split(/\|/g);
     args.concentracao = apres.slice(0, apres.length -2).join(' + ');
@@ -39,6 +40,7 @@ const parseCSV = (data) => {
   })
 }
 const columns = [
+  { Header:'Tamanho', accessor: 'tam' },
   { Header:'Princípio ativo', accessor: 'substancia' },
   { Header:'Concentração', accessor: 'concentracao' },
   { Header:'Marcas', accessor: 'marcas' },
@@ -81,9 +83,11 @@ function App (){
       data,
       initialState: {
         pageSize: 10,
+        hiddenColumns: ['tam'],
         sortBy: [
-          { id: 'substancia', desc: true },
-          { id: 'marcas', desc: false }
+          { id: 'tam', desc: false }
+          /*{ id: 'substancia', desc: false },
+          { id: 'marcas', desc: false }*/
         ]
       }
     },
@@ -118,9 +122,9 @@ function App (){
           onClick={() => tableInstance.previousPage()} disabled={!tableInstance.canPreviousPage}
           className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
         >
-          <span class="sr-only">Anterior</span>
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+          <span className="sr-only">Anterior</span>
+          <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
         </button>
         <button
@@ -128,9 +132,9 @@ function App (){
           className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
           onClick={() => tableInstance.nextPage()} disabled={!tableInstance.canNextPage}
         >
-          <span class="sr-only">Posterior</span>
-          <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+          <span className="sr-only">Posterior</span>
+          <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
         </button>
         <div className="relative font-medium">
