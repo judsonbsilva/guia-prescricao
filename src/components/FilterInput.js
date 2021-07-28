@@ -1,7 +1,4 @@
 import React, { useState } from 'react';
-import {
-    useAsyncDebounce
-} from 'react-table';
 
 function FilterInput({
     globalFilter,
@@ -10,7 +7,8 @@ function FilterInput({
     setFocus,
     focus,
     nextPage,
-    previousPage
+    previousPage,
+    state
 }){
     const [value, setValue] = useState(globalFilter)
     const onChange = value => {
@@ -45,7 +43,7 @@ function FilterInput({
             console.log(e.key)
     
             if(e.key == 'ArrowDown'){
-              setFocus(focus + 1);
+              setFocus(focus < state.pageSize - 1 ? focus + 1: focus);
             } else if(e.key == 'ArrowUp'){
               setFocus(focus > -1 ? focus -1: -1);
             } else if(e.key == 'Enter'){
