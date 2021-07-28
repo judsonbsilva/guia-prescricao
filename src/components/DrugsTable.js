@@ -1,24 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const DrugsTable = ({
     getTableProps,
     getTableBodyProps,
     headerGroups,
     prepareRow,
-    page
+    page,
+    focus
 }) => {
 
-    const xablau = (e) => {
-        console.log(e);
+    const xablau = (a,b) => {
+        console.log(a,b);
     }
 
     return (
-        <table {...getTableProps()} className='table-auto w-full'>
+        <table
+            {...getTableProps()}
+            className='table-auto w-full'
+            tabIndex={-1}
+        >
             <thead>
                 {headerGroups.map(headerGroup => (
                 <tr {...headerGroup.getHeaderGroupProps()} className='bg-gray-100'>
                     {headerGroup.headers.map(column => (
-                    <th {...column.getHeaderProps()} className='border px-2 py-2'>
+                    <th {...column.getHeaderProps()} className='border px-2 py-2 text-sm'>
                         {column.render('Header')}
                     </th>
                     ))}
@@ -29,7 +34,9 @@ const DrugsTable = ({
                 {page.map((row, i) => {
                     prepareRow(row)
                     return (
-                    <tr {...row.getRowProps()} onFocus={xablau}>
+                    <tr {...row.getRowProps()}
+                        className={`bg-white ${focus === i ? 'bg-gray-800 text-white' : ''}`}
+                    >
                         {row.cells.map(cell => {
                             return (
                             <td

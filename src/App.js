@@ -53,6 +53,7 @@ const columns = [
 
 function App (){
   const [data, setData] = useState([]);
+  const [focusIndex, setFocus] = useState(-1);
   
   useEffect(() => {
     if(data.length === 0){
@@ -65,24 +66,11 @@ function App (){
     }
   });
 
-  /*const {
-    pageOptions,
-    page,
-    state: { pageIndex, pageSize },
-    gotoPage,
-    previousPage,
-    nextPage,
-    setPageSize,
-    canPreviousPage,
-    canNextPage,
-    setFilter,
-  }*/
-  
   const tableInstance = useTable({
       columns,
       data,
       initialState: {
-        pageSize: 10,
+        pageSize: 5,
         hiddenColumns: ['tam'],
         sortBy: [
           { id: 'tam', desc: false }
@@ -105,14 +93,14 @@ function App (){
         <div className="w-full flex-none md:text-sm font-medium text-gray-500 sm:text-xs">Por Judson Barroso</div>
       </div>
       <div className="flex-auto md:w-full sm:w-1/2">
-        <FilterInput {...tableInstance}/>
+        <FilterInput {...tableInstance} setFocus={setFocus} focus={focusIndex}/>
       </div>
     </header>
     <div className="flex h-4/6 overflow-y-auto">
       {data.length === 0 ? 
         'Carregando...'
         :
-        <DrugsTable {...tableInstance}/>
+        <DrugsTable {...tableInstance} setFocus={setFocus} focus={focusIndex}/>
       }
     </div>
     <footer className="flex h-1/6">
@@ -147,6 +135,20 @@ function App (){
     </div>
   );
 /*  
+
+
+  /*const {
+    pageOptions,
+    page,
+    state: { pageIndex, pageSize },
+    gotoPage,
+    previousPage,
+    nextPage,
+    setPageSize,
+    canPreviousPage,
+    canNextPage,
+    setFilter,
+  }
 <div>Go to page:</div>
        <input
          type="number"
