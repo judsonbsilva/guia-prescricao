@@ -21,12 +21,8 @@ function FilterInput({
             apresentation = parts[2];
         }
         setGlobalFilter(name)
-
-        if(concentration)
-            setFilter('concentracao', concentration)
-
-        if(apresentation)
-            setFilter('apresentacao', apresentation);
+        setFilter('concentracao', concentration)
+        setFilter('apresentacao', apresentation);
     }
 
     return (
